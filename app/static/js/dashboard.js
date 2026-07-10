@@ -893,4 +893,38 @@ document.getElementById("langBtn").addEventListener("click", () => {
   if (dashboardData) renderDashboard();
 });
 
+// ── Mobile sidebar toggle ──
+(function () {
+  const toggle  = document.getElementById("menuToggle");
+  const sidebar = document.getElementById("sidebar");
+  const overlay = document.getElementById("sidebarOverlay");
+  const closeBtn = document.getElementById("sidebarClose");
+
+  function openSidebar() {
+    sidebar.classList.add("open");
+    overlay.classList.add("active");
+    document.body.style.overflow = "hidden";
+  }
+  function closeSidebar() {
+    sidebar.classList.remove("open");
+    overlay.classList.remove("active");
+    document.body.style.overflow = "";
+  }
+
+  if (toggle)  toggle.addEventListener("click", openSidebar);
+  if (closeBtn) closeBtn.addEventListener("click", closeSidebar);
+  if (overlay) overlay.addEventListener("click", closeSidebar);
+
+  // Close on Escape
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeSidebar();
+  });
+
+  // Auto-close sidebar when a preset is clicked on mobile
+  document.addEventListener("click", (e) => {
+    const item = e.target.closest(".insight-item, .kpi-item");
+    if (item && window.innerWidth <= 768) closeSidebar();
+  });
+})();
+
 loadDashboard();
