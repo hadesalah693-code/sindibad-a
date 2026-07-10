@@ -18,7 +18,11 @@
     <aside class="sidebar" id="sidebar">
       <div class="sidebar-inner">
 
+        <!-- Brand header — pinned top -->
         <div class="brand-block">
+          <button class="sidebar-close" id="sidebarClose" aria-label="Close">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+          </button>
           <div class="brand-icon">
             <svg viewBox="0 0 40 40" fill="none">
               <circle cx="20" cy="20" r="18" stroke="url(#g1)" stroke-width="1.5"/>
@@ -35,18 +39,21 @@
             <h1 class="brand-name">سندباد <span>AI</span></h1>
             <p class="brand-tag">Executive Intelligence</p>
           </div>
-          <button class="sidebar-close" id="sidebarClose" aria-label="Close">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
-          </button>
         </div>
 
-        <div class="company-block" id="companyMeta"></div>
+        <!-- Scrollable content area -->
+        <div class="sidebar-scroll">
 
-        <div class="sidebar-section flex-grow">
-          <p class="section-label" id="insightsSectionLabel">رؤى استراتيجية</p>
-          <div class="insight-list" id="presetCards"></div>
+          <div class="company-block" id="companyMeta"></div>
+
+          <div class="sidebar-section flex-grow">
+            <p class="section-label" id="insightsSectionLabel">رؤى استراتيجية</p>
+            <div class="insight-list" id="presetCards"></div>
+          </div>
+
         </div>
 
+        <!-- Footer — pinned bottom -->
         <div class="sidebar-footer">
           <div class="live-badge">
             <span class="pulse"></span>
