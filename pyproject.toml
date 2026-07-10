@@ -1,0 +1,15 @@
+[project]
+name = "Sindibad"
+version = "0.1.0"
+description = "Executive Strategic AI Advisor for Al Khebra Driving School"
+
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["app*"]
+
+[tool.chainlit]
+# Chainlit reads chainlit_app.py from project root
