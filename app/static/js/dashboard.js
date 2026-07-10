@@ -838,6 +838,22 @@ async function ask(query) {
   }
 }
 
+function scrollToReportStart(reportEl) {
+  if (!reportEl) return;
+  const scrollHost = document.getElementById("workspaceBody");
+  const anchor = reportEl.querySelector(".report-canvas-head") || reportEl;
+  if (scrollHost) {
+    const top =
+      anchor.getBoundingClientRect().top -
+      scrollHost.getBoundingClientRect().top +
+      scrollHost.scrollTop -
+      16;
+    scrollHost.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
+    return;
+  }
+  anchor.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
 function showResponse(query, data) {
   document.getElementById("emptyState").classList.add("hidden");
   const feed = document.getElementById("chatFeed");
@@ -845,6 +861,8 @@ function showResponse(query, data) {
 
   const turn = buildChatTurn(query, data);
   feed.insertAdjacentHTML("beforeend", turn.html);
+  const reportEl = feed.lastElementChild;
+  scrollToReportStart(reportEl);
 
   if (turn.chartId && turn.chartData) {
     setTimeout(() => mountChart(turn.chartId, turn.chartData, turn.theme), 80);
@@ -858,8 +876,6 @@ function showResponse(query, data) {
   turn.extraCharts.forEach((c, i) => {
     setTimeout(() => mountPlotlyChart(c.id, c.figure, c.title), 120 * (i + 1));
   });
-
-  feed.lastElementChild?.scrollIntoView({ behavior: "smooth", block: "end" });
 }
 
 document.getElementById("sendBtn").addEventListener("click", () => ask(document.getElementById("queryInput").value));
@@ -876,5 +892,39 @@ document.getElementById("langBtn").addEventListener("click", () => {
   lang = lang === "ar" ? "en" : "ar";
   if (dashboardData) renderDashboard();
 });
+
+// ── Mobile sidebar toggle ──
+(function () {
+  const toggle  = document.getElementById("menuToggle");
+  const sidebar = document.getElementById("sidebar");
+  const overlay = document.getElementById("sidebarOverlay");
+  const closeBtn = document.getElementById("sidebarClose");
+
+  function openSidebar() {
+    sidebar.classList.add("open");
+    overlay.classList.add("active");
+    document.body.style.overflow = "hidden";
+  }
+  function closeSidebar() {
+    sidebar.classList.remove("open");
+    overlay.classList.remove("active");
+    document.body.style.overflow = "";
+  }
+
+  if (toggle)  toggle.addEventListener("click", openSidebar);
+  if (closeBtn) closeBtn.addEventListener("click", closeSidebar);
+  if (overlay) overlay.addEventListener("click", closeSidebar);
+
+  // Close on Escape
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeSidebar();
+  });
+
+  // Auto-close sidebar when a preset is clicked on mobile
+  document.addEventListener("click", (e) => {
+    const item = e.target.closest(".insight-item, .kpi-item");
+    if (item && window.innerWidth <= 768) closeSidebar();
+  });
+})();
 
 loadDashboard();
