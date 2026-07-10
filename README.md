@@ -76,6 +76,22 @@ If a query cannot be answered from the operational database, Sindibad responds:
 
 No hallucinated metrics or fabricated numbers.
 
+## Deploy (Render — free)
+
+The repo includes [`render.yaml`](render.yaml) for one-click deploy from GitHub.
+
+1. Open [Render Dashboard](https://dashboard.render.com/) and sign in with GitHub.
+2. **New** → **Blueprint** → connect repo [hadesalah693-code/sindibad-a](https://github.com/hadesalah693-code/sindibad-a).
+3. Apply the blueprint — Render builds and starts `uvicorn` on `/health`.
+4. Your live URL will look like: `https://sindibad.onrender.com`
+
+**Docker (optional):**
+
+```bash
+docker build -t sindibad .
+docker run -p 8000:8000 sindibad
+```
+
 ## Tests
 
 ```bash
