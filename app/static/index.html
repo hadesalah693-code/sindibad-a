@@ -11,9 +11,39 @@
 </head>
 <body>
 
+  <!-- Language selection — shown before first use -->
+  <div class="lang-gate" id="langGate" aria-modal="true" role="dialog" aria-labelledby="langGateTitle">
+    <div class="lang-gate-card">
+      <div class="lang-gate-head">
+        <div class="lang-gate-logo">
+          <svg viewBox="0 0 40 40" fill="none" width="36" height="36">
+            <circle cx="20" cy="20" r="18" stroke="url(#lg)" stroke-width="1.5"/>
+            <circle cx="20" cy="20" r="8" fill="url(#lg)"/>
+            <defs>
+              <linearGradient id="lg" x1="0" y1="0" x2="40" y2="40">
+                <stop stop-color="#c9a66b"/>
+                <stop offset="1" stop-color="#1e3a5f"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <h1 id="langGateTitle">Sindibad AI</h1>
+        <p class="lang-gate-sub">Doha Oasis · <span lang="ar">واحة الدوحة</span></p>
+      </div>
+      <div class="lang-gate-body">
+        <h2>Welcome — <span lang="ar">مرحباً</span></h2>
+        <p class="lang-gate-hint">Choose your preferred language<br/><span lang="ar">اختر لغتك المفضلة</span></p>
+        <div class="lang-gate-actions">
+          <button type="button" class="lang-pick" data-lang="ar" lang="ar">العربية</button>
+          <button type="button" class="lang-pick" data-lang="en" lang="en">English</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-  <div class="shell">
+  <div class="shell app-hidden" id="appShell">
 
     <aside class="sidebar" id="sidebar">
       <div class="sidebar-inner">
@@ -116,32 +146,6 @@
       </footer>
 
     </main>
-
-    <!-- ── Bottom navigation (mobile only) ── -->
-    <nav class="bottom-nav">
-      <button class="bnav-item" aria-label="لوحة القيادة">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
-        <span>لوحة القيادة</span>
-      </button>
-      <button class="bnav-item" aria-label="التقارير">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-        <span>التقارير</span>
-      </button>
-      <button class="bnav-item bnav-home" aria-label="الرئيسية">
-        <div class="bnav-home-icon">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-        </div>
-        <span>الرئيسية</span>
-      </button>
-      <button class="bnav-item" aria-label="المزيد">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
-        <span>المزيد</span>
-      </button>
-      <button class="bnav-item" aria-label="الإعدادات">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-        <span>الإعدادات</span>
-      </button>
-    </nav>
 
   </div>
 

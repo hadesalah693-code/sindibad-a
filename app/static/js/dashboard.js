@@ -1,6 +1,8 @@
 const API = "";
+const LANG_KEY = "sindibad_lang";
 let dashboardData = null;
 let lang = "ar";
+let appStarted = false;
 
 const I18N = {
   ar: {
@@ -16,7 +18,7 @@ const I18N = {
     placeholder: "اكتب سؤالك الاستراتيجي هنا...",
     employees: "موظف",
     departments: "إدارات",
-    subtitle: "اسأل أي سؤال — سأحلل البيانات وأعرض لك الأرقام والرسوم.",
+    subtitle: "اختر سؤالاً جاهزاً أو اكتب سؤالك في الأسفل.",
     loadingTitle: "سندباد يحلل البيانات",
     reportSource: "Excel · Doha Oasis",
     sendError: "تعذر الاتصال بالخادم.",
@@ -35,7 +37,7 @@ const I18N = {
     placeholder: "Ask your strategic question here...",
     employees: "employees",
     departments: "departments",
-    subtitle: "Ask anything — I'll analyze the data and show numbers and charts.",
+    subtitle: "Pick a ready-made report or type your question below.",
     loadingTitle: "Sindibad is analyzing",
     reportSource: "Excel · Doha Oasis",
     sendError: "Could not connect to the server.",
@@ -67,6 +69,53 @@ function applyShellI18n() {
   document.getElementById("queryInput").placeholder = t("placeholder");
   document.querySelector(".loading-title").textContent = t("loadingTitle");
   document.getElementById("langBtn").textContent = lang === "ar" ? "EN" : "AR";
+}
+
+function setLanguage(next) {
+  lang = next === "en" ? "en" : "ar";
+  localStorage.setItem(LANG_KEY, lang);
+  applyShellI18n();
+  if (dashboardData) renderDashboard();
+}
+
+function dismissLangGate() {
+  const gate = document.getElementById("langGate");
+  const shell = document.getElementById("appShell");
+  gate?.classList.add("lang-gate--hide");
+  shell?.classList.remove("app-hidden");
+  document.body.classList.remove("lang-gate-open");
+  window.setTimeout(() => gate?.classList.add("hidden"), 420);
+}
+
+function startApp() {
+  if (appStarted) return;
+  appStarted = true;
+  loadDashboard();
+}
+
+function initApp() {
+  const saved = localStorage.getItem(LANG_KEY);
+  const gate = document.getElementById("langGate");
+  const shell = document.getElementById("appShell");
+
+  document.querySelectorAll(".lang-pick").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      setLanguage(btn.dataset.lang);
+      dismissLangGate();
+      startApp();
+    });
+  });
+
+  if (saved === "ar" || saved === "en") {
+    lang = saved;
+    gate?.classList.add("hidden");
+    shell?.classList.remove("app-hidden");
+    startApp();
+    return;
+  }
+
+  document.body.classList.add("lang-gate-open");
+  shell?.classList.add("app-hidden");
 }
 
 function reportProfile(type) {
@@ -177,14 +226,6 @@ function bindReportActions(root) {
       showReportActionConfirmation(canvas, btn.dataset.reportAction);
     });
   });
-}
-
-function updateComposerTagsVisibility() {
-  const feed = document.getElementById("chatFeed");
-  const tags = document.getElementById("composerTags");
-  if (!tags) return;
-  const hasResponses = feed && !feed.classList.contains("hidden") && feed.children.length > 0;
-  tags.classList.toggle("hidden", hasResponses);
 }
 
 function wrapReportCanvas({ query, headline, type, theme, bodyHtml }) {
@@ -979,7 +1020,6 @@ function showResponse(query, data) {
   feed.insertAdjacentHTML("beforeend", turn.html);
   const reportEl = feed.lastElementChild;
   if (reportEl) bindReportActions(reportEl);
-  updateComposerTagsVisibility();
   scrollToReportStart(reportEl);
 
   if (turn.chartId && turn.chartData) {
@@ -1007,8 +1047,7 @@ document.getElementById("themeBtn").addEventListener("click", () => {
 });
 
 document.getElementById("langBtn").addEventListener("click", () => {
-  lang = lang === "ar" ? "en" : "ar";
-  if (dashboardData) renderDashboard();
+  setLanguage(lang === "ar" ? "en" : "ar");
 });
 
 // ── Mobile sidebar toggle ──
@@ -1045,4 +1084,4 @@ document.getElementById("langBtn").addEventListener("click", () => {
   });
 })();
 
-loadDashboard();
+initApp();
