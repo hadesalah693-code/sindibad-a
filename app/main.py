@@ -2,12 +2,14 @@
 
 from __future__ import annotations
 
-from contextlib import asynccontextmanager
+import logging
+import os
+import traceback
 from pathlib import Path
 from typing import Any
 
-from fastapi import FastAPI, HTTPException
-from fastapi.responses import FileResponse
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
@@ -21,27 +23,36 @@ from app.services.dashboard import (
     try_special_query,
 )
 
+logger = logging.getLogger("sindibad")
 _agent: SindibadAgent | None = None
 STATIC_DIR = Path(__file__).resolve().parent / "static"
+_ON_VERCEL = bool(os.environ.get("VERCEL"))
 
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
+def _ensure_agent() -> SindibadAgent:
+    """Lazy init for serverless (Vercel) where lifespan may not run."""
     global _agent
-    load_data()
-    _agent = SindibadAgent()
-    yield
+    if _agent is None:
+        load_data()
+        _agent = SindibadAgent()
+    return _agent
 
 
 app = FastAPI(
     title=settings.app_name,
     version=settings.app_version,
     description="Executive Strategic AI Advisor — Doha Oasis Company",
-    lifespan=lifespan,
 )
 
-if STATIC_DIR.exists():
+if STATIC_DIR.exists() and not _ON_VERCEL:
     app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
+
+
+@app.exception_handler(Exception)
+async def unhandled_exception_handler(request: Request, exc: Exception):
+    logger.exception("Unhandled error on %s", request.url.path)
+    detail = str(exc) if _ON_VERCEL else traceback.format_exc()
+    return JSONResponse(status_code=500, content={"detail": detail, "path": request.url.path})
 
 
 class QueryRequest(BaseModel):
@@ -127,6 +138,11 @@ def _result_to_payload(result: AgentResult) -> dict[str, Any]:
 
 @app.get("/")
 async def dashboard_home():
+    if _ON_VERCEL:
+        raise HTTPException(
+            status_code=404,
+            detail="Dashboard UI is served from public/ on Vercel.",
+        )
     index = STATIC_DIR / "index.html"
     if not index.exists():
         raise HTTPException(status_code=404, detail="Dashboard UI not found")
@@ -135,6 +151,7 @@ async def dashboard_home():
 
 @app.get("/api/v1/dashboard")
 async def dashboard_data():
+    load_data()
     kpis = get_dashboard_kpis()
     return {
         "company": {
@@ -189,26 +206,31 @@ async def dashboard_data():
 
 @app.post("/api/v1/advise")
 async def advise(request: QueryRequest):
-    if _agent is None:
-        raise HTTPException(status_code=503, detail="Agent not initialized")
+    agent = _ensure_agent()
 
     special = try_special_query(request.query, language=request.language)
     if special:
         return _special_to_payload(special, request.query)
 
-    result = _agent.ask(request.query, include_charts=request.include_charts)
+    result = agent.ask(request.query, include_charts=request.include_charts)
     return _result_to_payload(result)
+
+
+@app.get("/health/live")
+async def health_live():
+    return {"status": "ok", "app": settings.app_name, "vercel": _ON_VERCEL}
 
 
 @app.get("/health")
 async def health():
-    store = load_data() if _agent is None else _agent.store
+    store = _ensure_agent().store
     return {
         "status": "healthy",
         "app": settings.app_name,
         "records": len(store.correlation),
         "source": store.source,
         "source_path": store.source_path,
+        "data_dir": str(settings.data_dir),
         "sheets_loaded": [
             "Correlation_Data", "Monthly_HR", "Finance", "Metric_Map",
             "Brand", "Customer_Ops", "Employees", "Evidence_Readiness", "Dashboard",
@@ -218,9 +240,7 @@ async def health():
 
 @app.get("/api/v1/metrics")
 async def list_metrics():
-    if _agent is None:
-        raise HTTPException(status_code=503, detail="Agent not initialized")
-    mm = _agent.store.metric_map
+    mm = _ensure_agent().store.metric_map
     return [
         {
             "name": row["metric_name"],

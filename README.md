@@ -76,16 +76,36 @@ If a query cannot be answered from the operational database, Sindibad responds:
 
 No hallucinated metrics or fabricated numbers.
 
-## Deploy (Render — free)
+## Deploy
 
-The repo includes [`render.yaml`](render.yaml) for one-click deploy from GitHub.
+### Vercel (recommended)
 
-1. Open [Render Dashboard](https://dashboard.render.com/) and sign in with GitHub.
-2. **New** → **Blueprint** → connect repo [hadesalah693-code/sindibad-a](https://github.com/hadesalah693-code/sindibad-a).
-3. Apply the blueprint — Render builds and starts `uvicorn` on `/health`.
-4. Your live URL will look like: `https://sindibad.onrender.com`
+The repo includes [`vercel.json`](vercel.json) for zero-config FastAPI on [Vercel](https://vercel.com).
 
-**Docker (optional):**
+1. Open [vercel.com/new](https://vercel.com/new) and sign in with GitHub.
+2. Import repo [hadesalah693-code/sindibad-a](https://github.com/hadesalah693-code/sindibad-a).
+3. Leave **Framework Preset** as **Other** — Vercel auto-detects `app/main.py`.
+4. Deploy. Build runs `scripts/prepare_vercel.py` to publish the dashboard UI to `public/`.
+
+**CLI (optional):**
+
+```bash
+npm i -g vercel
+vercel
+```
+
+Live URL example: `https://sindibad-a.vercel.app`  
+Health check: `/health`  
+First request after idle may take ~10–20s (Excel load + cold start).
+
+### Render (alternative — free)
+
+[`render.yaml`](render.yaml) deploys via Blueprint on [Render](https://render.com):
+
+1. [Render Dashboard](https://dashboard.render.com/) → **New** → **Blueprint** → connect the repo.
+2. Apply — URL like `https://sindibad.onrender.com` (free tier sleeps after 15 min idle).
+
+### Docker
 
 ```bash
 docker build -t sindibad .
