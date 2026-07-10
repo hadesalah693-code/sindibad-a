@@ -1282,28 +1282,32 @@ body {
     overflow: visible;
   }
 
-  /* Sidebar becomes slide-in overlay on mobile */
+  /* Sidebar: hidden off-screen on mobile, slides in on open */
   .sidebar {
     position: fixed;
     top: 0;
     bottom: 0;
-    inset-inline-end: 0;
-    inset-inline-start: auto;
-    width: min(280px, 88vw);
+    right: 0;
+    left: auto;
+    width: min(280px, 85vw);
     min-width: unset;
-    transform: translateX(110%);
+    transform: translateX(100%);
     z-index: 199;
     box-shadow: var(--sh-xl);
     border: none;
+    transition: transform 0.28s var(--ease);
+    visibility: hidden;
   }
   [dir="ltr"] .sidebar {
-    inset-inline-end: auto;
-    inset-inline-start: 0;
-    transform: translateX(-110%);
+    right: auto;
+    left: 0;
+    transform: translateX(-100%);
   }
-  .sidebar.open { transform: translateX(0); }
+  .sidebar.open {
+    transform: translateX(0);
+    visibility: visible;
+  }
   .sidebar-close { display: flex; }
-
   .menu-toggle { display: flex; }
 
   .workspace {
@@ -1373,10 +1377,16 @@ body {
   .loading-steps { min-width: unset; }
 }
 
-/* ── Force desktop sidebar visible ── */
+/* ── Desktop: sidebar always visible ── */
 @media (min-width: 769px) {
   .sidebar-overlay { display: none !important; }
-  .sidebar { transform: none !important; position: relative !important; }
+  .sidebar {
+    position: relative !important;
+    transform: none !important;
+    visibility: visible !important;
+    right: auto !important;
+    left: auto !important;
+  }
   .sidebar-close { display: none !important; }
   .menu-toggle { display: none !important; }
 }
