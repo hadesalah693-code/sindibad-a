@@ -73,10 +73,125 @@ function reportProfile(type) {
   return REPORT_PROFILES[type] || REPORT_PROFILES.generic;
 }
 
+const REPORT_ACTION_LABELS = {
+  costs: {
+    primary_ar: "خطة تخفيض التكاليف",
+    primary_en: "Cost Reduction Plan",
+    primaryStyle: "primary",
+  },
+  exit_risk: {
+    primary_ar: "جدولة مواعيد المتابعة",
+    primary_en: "Schedule follow-ups",
+    primaryStyle: "danger",
+  },
+  iso: {
+    primary_ar: "خطة تحسين ISO 30414",
+    primary_en: "ISO Improvement Plan",
+    primaryStyle: "primary",
+  },
+  correlation: {
+    primary_ar: "تحليل ارتباط معمق",
+    primary_en: "Deep Correlation Analysis",
+    primaryStyle: "primary",
+  },
+  generic: {
+    primary_ar: "تحليل تفصيلي",
+    primary_en: "Detailed Analysis",
+    primaryStyle: "primary",
+  },
+  greeting: null,
+};
+
+/** Confirmation messages — like demo: click → status pill, not a new report */
+const REPORT_ACTION_SUCCESS = {
+  costs: {
+    full: { ar: "✨ تقرير التكاليف الكامل جاهز.", en: "✨ Full cost report is ready." },
+    plan: { ar: "✅ تم إعداد خطة تخفيض التكاليف.", en: "✅ Cost reduction plan prepared." },
+  },
+  exit_risk: {
+    full: { ar: "✨ تقرير مخاطر المغادرة جاهز.", en: "✨ Exit risk report is ready." },
+    plan: { ar: "✅ تمت جدولة مواعيد المتابعة.", en: "✅ Follow-up appointments scheduled." },
+  },
+  iso: {
+    full: { ar: "✨ تقرير ISO 30414 جاهز.", en: "✨ ISO 30414 report is ready." },
+    plan: { ar: "✅ تم إعداد خطة تحسين ISO 30414.", en: "✅ ISO improvement plan prepared." },
+  },
+  correlation: {
+    full: { ar: "✨ تحليل الارتباط جاهز.", en: "✨ Correlation analysis is ready." },
+    plan: { ar: "✅ تم توسيع التحليل.", en: "✅ Analysis expanded." },
+  },
+  generic: {
+    full: { ar: "✨ التقرير جاهز.", en: "✨ Report is ready." },
+    plan: { ar: "✅ تم إعداد التحليل التفصيلي.", en: "✅ Detailed analysis prepared." },
+  },
+};
+
+function renderStandardActionBar(type) {
+  const ar = lang === "ar";
+  const labels = REPORT_ACTION_LABELS[type];
+  if (!labels) return "";
+  const primaryLabel = ar ? labels.primary_ar : labels.primary_en;
+  const primaryClass = labels.primaryStyle === "danger" ? "rab-danger" : "rab-primary";
+  const secondaryLabel = ar ? "عرض التقرير الكامل" : "View full report";
+  return `
+    <div class="report-action-bar" data-report-type="${esc(type)}">
+      <button class="rab-btn rab-outline" type="button" data-report-action="full">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        ${esc(secondaryLabel)}
+      </button>
+      <button class="rab-btn ${primaryClass}" type="button" data-report-action="plan">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2z"/></svg>
+        ${esc(primaryLabel)}
+      </button>
+      <div class="report-complete-pill hidden" role="status" aria-live="polite">
+        <span class="report-complete-text"></span>
+      </div>
+    </div>`;
+}
+
+function showReportActionConfirmation(canvas, action) {
+  const bar = canvas.querySelector(".report-action-bar");
+  if (!bar || bar.classList.contains("report-action-bar--done")) return;
+
+  const type = bar.dataset.reportType || "generic";
+  const msgs = REPORT_ACTION_SUCCESS[type] || REPORT_ACTION_SUCCESS.generic;
+  const ar = lang === "ar";
+  const text = msgs[action] ? (ar ? msgs[action].ar : msgs[action].en) : (ar ? msgs.full.ar : msgs.full.en);
+
+  bar.querySelectorAll(".rab-btn").forEach((b) => b.classList.add("hidden"));
+  const pill = bar.querySelector(".report-complete-pill");
+  const pillText = bar.querySelector(".report-complete-text");
+  if (pill && pillText) {
+    pillText.textContent = text;
+    pill.classList.remove("hidden");
+  }
+  bar.classList.add("report-action-bar--done");
+}
+
+function bindReportActions(root) {
+  if (!root) return;
+  root.querySelectorAll("[data-report-action]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const canvas = btn.closest(".report-canvas");
+      if (!canvas) return;
+      showReportActionConfirmation(canvas, btn.dataset.reportAction);
+    });
+  });
+}
+
+function updateComposerTagsVisibility() {
+  const feed = document.getElementById("chatFeed");
+  const tags = document.getElementById("composerTags");
+  if (!tags) return;
+  const hasResponses = feed && !feed.classList.contains("hidden") && feed.children.length > 0;
+  tags.classList.toggle("hidden", hasResponses);
+}
+
 function wrapReportCanvas({ query, headline, type, theme, bodyHtml }) {
   const profile = reportProfile(type);
   const themeClass = theme || profile.theme || "neutral";
   const title = headline || (lang === "ar" ? profile.labelAr : profile.labelEn);
+  const completeBar = renderStandardActionBar(type);
   return `
     <div class="chat-turn turn-${type}">
       <article class="report-canvas">
@@ -92,6 +207,7 @@ function wrapReportCanvas({ query, headline, type, theme, bodyHtml }) {
           <span class="rc-head-badge">${t("reportSource")}</span>
         </header>
         <div class="report-canvas-body">${bodyHtml}</div>
+        ${completeBar}
         <footer class="report-canvas-foot">
           <span>${t("reportFooter")}</span>
           <span>${nowTime()}</span>
@@ -862,6 +978,8 @@ function showResponse(query, data) {
   const turn = buildChatTurn(query, data);
   feed.insertAdjacentHTML("beforeend", turn.html);
   const reportEl = feed.lastElementChild;
+  if (reportEl) bindReportActions(reportEl);
+  updateComposerTagsVisibility();
   scrollToReportStart(reportEl);
 
   if (turn.chartId && turn.chartData) {
