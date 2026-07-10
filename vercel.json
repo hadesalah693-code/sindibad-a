@@ -1,12 +1,26 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "python scripts/prepare_vercel.py",
-  "installCommand": "pip install -r requirements-vercel.txt",
-  "functions": {
-    "app/main.py": {
-      "maxDuration": 60,
-      "memory": 1024,
-      "excludeFiles": "{tests/**,.venv/**,__pycache__/**,.pytest_cache/**,chainlit_app.py,chainlit.md,.chainlit/**,data/*.csv,app/static/**,public/**,render.yaml,Dockerfile,.dockerignore,run.ps1,.git/**}"
+  "services": {
+    "sindibad": {
+      "root": ".",
+      "framework": "fastapi",
+      "entrypoint": "app.main:app",
+      "installCommand": "pip install -r requirements-vercel.txt",
+      "buildCommand": "python scripts/prepare_vercel.py",
+      "functions": {
+        "app/main.py": {
+          "maxDuration": 60,
+          "memory": 1024,
+          "excludeFiles": "{tests/**,.venv/**,__pycache__/**,.pytest_cache/**,chainlit_app.py,chainlit.md,.chainlit/**,data/*.csv,public/**,render.yaml,Dockerfile,.dockerignore,run.ps1,.git/**}"
+        }
+      }
     }
-  }
+  },
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": { "service": "sindibad" } },
+    { "source": "/health", "destination": { "service": "sindibad" } },
+    { "source": "/health/(.*)", "destination": { "service": "sindibad" } },
+    { "source": "/", "destination": { "service": "sindibad" } },
+    { "source": "/static/(.*)", "destination": { "service": "sindibad" } }
+  ]
 }

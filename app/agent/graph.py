@@ -59,13 +59,13 @@ def build_sindibad_graph():
     graph.add_node("search_data", search_data_node)
     graph.add_node("correlate", correlate_node)
     graph.add_node("narrative", narrative_node)
-    graph.add_node("charts", chart_node)
+    graph.add_node("build_charts", chart_node)
 
     graph.add_edge(START, "parse_query")
     graph.add_edge("parse_query", "search_data")
     graph.add_edge("search_data", "correlate")
     graph.add_edge("correlate", "narrative")
-    graph.add_edge("narrative", "charts")
-    graph.add_edge("charts", END)
+    graph.add_edge("narrative", "build_charts")
+    graph.add_edge("build_charts", END)
 
     return graph.compile()

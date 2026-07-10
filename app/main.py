@@ -44,7 +44,7 @@ app = FastAPI(
     description="Executive Strategic AI Advisor — Doha Oasis Company",
 )
 
-if STATIC_DIR.exists() and not _ON_VERCEL:
+if STATIC_DIR.exists():
     app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 
 
@@ -138,15 +138,10 @@ def _result_to_payload(result: AgentResult) -> dict[str, Any]:
 
 @app.get("/")
 async def dashboard_home():
-    if _ON_VERCEL:
-        raise HTTPException(
-            status_code=404,
-            detail="Dashboard UI is served from public/ on Vercel.",
-        )
-    index = STATIC_DIR / "index.html"
-    if not index.exists():
-        raise HTTPException(status_code=404, detail="Dashboard UI not found")
-    return FileResponse(index)
+    for index in (STATIC_DIR / "index.html", Path.cwd() / "public" / "index.html"):
+        if index.exists():
+            return FileResponse(index)
+    raise HTTPException(status_code=404, detail="Dashboard UI not found")
 
 
 @app.get("/api/v1/dashboard")
