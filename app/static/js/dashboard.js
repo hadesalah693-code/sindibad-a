@@ -992,7 +992,9 @@ function buildChatTurn(query, data) {
 
 async function ask(query) {
   if (!query.trim()) return;
-  document.getElementById("queryInput").value = query;
+  const input = document.getElementById("queryInput");
+  input.value = query;
+  input.blur();
 
   const profileKey = detectQueryProfile(query);
 
@@ -1012,20 +1014,45 @@ async function ask(query) {
   }
 }
 
+function getScrollHost() {
+  const workspaceBody = document.getElementById("workspaceBody");
+  const shell = document.querySelector(".shell");
+  if (workspaceBody && shell && getComputedStyle(shell).overflow !== "visible") {
+    return workspaceBody;
+  }
+  return document.scrollingElement || document.documentElement;
+}
+
 function scrollToReportStart(reportEl) {
   if (!reportEl) return;
-  const scrollHost = document.getElementById("workspaceBody");
-  const anchor = reportEl.querySelector(".report-canvas-head") || reportEl;
-  if (scrollHost) {
-    const top =
-      anchor.getBoundingClientRect().top -
-      scrollHost.getBoundingClientRect().top +
-      scrollHost.scrollTop -
-      16;
-    scrollHost.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
+
+  const anchor =
+    reportEl.querySelector(".report-canvas-head") ||
+    reportEl.querySelector(".report-canvas-body") ||
+    reportEl;
+  const scrollHost = getScrollHost();
+  const offset = 12;
+
+  let top;
+  if (scrollHost === document.documentElement || scrollHost === document.body) {
+    top = anchor.getBoundingClientRect().top + window.scrollY - offset;
+    window.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
     return;
   }
-  anchor.scrollIntoView({ behavior: "smooth", block: "start" });
+
+  top =
+    anchor.getBoundingClientRect().top -
+    scrollHost.getBoundingClientRect().top +
+    scrollHost.scrollTop -
+    offset;
+  scrollHost.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
+}
+
+function scheduleScrollToReportStart(reportEl) {
+  const run = () => scrollToReportStart(reportEl);
+  requestAnimationFrame(() => requestAnimationFrame(run));
+  window.setTimeout(run, 120);
+  window.setTimeout(run, 420);
 }
 
 function showResponse(query, data) {
@@ -1037,19 +1064,25 @@ function showResponse(query, data) {
   feed.insertAdjacentHTML("beforeend", turn.html);
   const reportEl = feed.lastElementChild;
   if (reportEl) bindReportActions(reportEl);
-  scrollToReportStart(reportEl);
+  scheduleScrollToReportStart(reportEl);
 
   if (turn.chartId && turn.chartData) {
-    setTimeout(() => mountChart(turn.chartId, turn.chartData, turn.theme), 80);
+    setTimeout(() => {
+      mountChart(turn.chartId, turn.chartData, turn.theme);
+      scheduleScrollToReportStart(reportEl);
+    }, 80);
   } else if (turn.chartId && turn.plotlyChart) {
-    setTimeout(
-      () => mountPlotlyChart(turn.chartId, turn.plotlyChart.figure, turn.plotlyChart.title),
-      80
-    );
+    setTimeout(() => {
+      mountPlotlyChart(turn.chartId, turn.plotlyChart.figure, turn.plotlyChart.title);
+      scheduleScrollToReportStart(reportEl);
+    }, 80);
   }
 
   turn.extraCharts.forEach((c, i) => {
-    setTimeout(() => mountPlotlyChart(c.id, c.figure, c.title), 120 * (i + 1));
+    setTimeout(() => {
+      mountPlotlyChart(c.id, c.figure, c.title);
+      scheduleScrollToReportStart(reportEl);
+    }, 120 * (i + 1));
   });
 }
 
