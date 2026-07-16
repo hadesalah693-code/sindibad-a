@@ -112,6 +112,122 @@ def get_preset_questions() -> list[PresetQuestion]:
     ]
 
 
+_WORKBOOK_STAT_SPECS: list[tuple[str, str, str, str, str]] = [
+    (
+        "Average Engagement Score",
+        "engagement",
+        "متوسط الانخراط",
+        "Avg Engagement",
+        "score",
+    ),
+    (
+        "Average Customer Satisfaction",
+        "csat",
+        "رضا العملاء",
+        "Customer Satisfaction",
+        "score",
+    ),
+    (
+        "Average Employer Brand Score",
+        "brand",
+        "العلامة كصاحب عمل",
+        "Employer Brand",
+        "score",
+    ),
+    (
+        "Average Training Completion",
+        "training",
+        "إكمال التدريب",
+        "Training Completion",
+        "pct",
+    ),
+    (
+        "Average SLA Compliance",
+        "sla",
+        "الالتزام بـ SLA",
+        "SLA Compliance",
+        "pct",
+    ),
+    (
+        "Average HC Impact Score",
+        "hc_impact",
+        "تأثير رأس المال البشري",
+        "HC Impact Score",
+        "score",
+    ),
+    (
+        "Average Turnover Rate",
+        "turnover",
+        "معدل الدوران",
+        "Turnover Rate",
+        "pct",
+    ),
+    (
+        "Total Revenue QAR",
+        "revenue",
+        "إجمالي الإيرادات",
+        "Total Revenue",
+        "qar",
+    ),
+]
+
+
+def _format_workbook_stat(value: float, fmt: str) -> str:
+    if fmt == "pct":
+        return f"{value * 100:.1f}%"
+    if fmt == "qar":
+        if value >= 1_000_000:
+            return f"{value / 1_000_000:.1f}M QAR"
+        return f"{value:,.0f} QAR"
+    if fmt == "score":
+        if value <= 1:
+            return f"{value * 100:.1f}%"
+        return f"{value:.1f}"
+    return f"{value:,.0f}"
+
+
+def get_workbook_statistics() -> list[dict[str, Any]]:
+    """Expose pre-computed KPIs from the Excel Dashboard sheet."""
+    store = get_data_store()
+    sheet_kpis = store.dashboard.get("kpis", {})
+    stats: list[dict[str, Any]] = []
+
+    for key, stat_id, label_ar, label_en, fmt in _WORKBOOK_STAT_SPECS:
+        raw = sheet_kpis.get(key)
+        if raw is None:
+            continue
+        try:
+            value = float(raw)
+        except (TypeError, ValueError):
+            continue
+        stats.append(
+            {
+                "id": stat_id,
+                "label_ar": label_ar,
+                "label_en": label_en,
+                "value": _format_workbook_stat(value, fmt),
+                "source": "Dashboard",
+            }
+        )
+
+    correlations = store.dashboard.get("correlations", [])
+    if correlations:
+        strongest = max(correlations, key=lambda c: abs(float(c.get("r", 0) or 0)))
+        stats.append(
+            {
+                "id": "strongest_correlation",
+                "label_ar": "أقوى ارتباط",
+                "label_en": "Strongest Correlation",
+                "value": f"r = {float(strongest['r']):+.2f}",
+                "subtitle_ar": str(strongest.get("pair", "")),
+                "subtitle_en": str(strongest.get("pair", "")),
+                "source": "Dashboard",
+            }
+        )
+
+    return stats
+
+
 def _fmt_qar(amount: float) -> str:
     if amount >= 1_000_000:
         return f"{amount / 1_000_000:.1f}M QAR"

@@ -774,6 +774,78 @@ body.lang-gate-open { overflow: hidden; }
 .hero-kpi-hint { font-size: 0.62rem; color: var(--text-muted); margin-top: 5px; opacity: 0; transition: opacity var(--t); }
 .hero-kpi:hover .hero-kpi-hint { opacity: 1; }
 
+/* ── Workbook statistics (Dashboard sheet) ── */
+.workbook-stats {
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  padding: 12px 22px 14px;
+  flex-shrink: 0;
+}
+
+.workbook-stats-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.workbook-stats-title {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.workbook-stats-source {
+  font-size: 0.62rem;
+  color: var(--text-muted);
+  opacity: 0.85;
+}
+
+.workbook-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.workbook-stat {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 12px;
+  min-width: 0;
+}
+
+.workbook-stat-label {
+  font-size: 0.62rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+  line-height: 1.3;
+}
+
+.workbook-stat-value {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--navy);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.03em;
+}
+
+[data-theme="dark"] .workbook-stat-value { color: var(--gold-light); }
+
+.workbook-stat-sub {
+  font-size: 0.58rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+  line-height: 1.25;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 /* ── Workspace body ── */
 .workspace-body {
   flex: 1;
@@ -1572,6 +1644,10 @@ body.lang-gate-open { overflow: hidden; }
   }
   .hero-kpi:last-child { border-bottom: none; }
   .hero-kpi-value { font-size: 1.38rem; }
+
+  .workbook-stats { padding: 10px 14px 12px; }
+  .workbook-stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .workbook-stat-value { font-size: 0.92rem; }
 
   .workspace-body { padding: 14px; }
 

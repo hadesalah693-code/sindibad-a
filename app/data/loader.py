@@ -21,6 +21,7 @@ EXCEL_SHEETS = {
     "employees": "Employees",
     "evidence": "Evidence_Readiness",
     "dashboard": "Dashboard",
+    "lists": "Lists",
 }
 
 # Business KPI / driver labels → Correlation_Data column names
@@ -97,6 +98,7 @@ class DataStore:
     customer_ops: pd.DataFrame
     employees: pd.DataFrame
     evidence_readiness: pd.DataFrame
+    lists: pd.DataFrame
     dashboard: dict
     loaded_at: str
     source: str
@@ -329,6 +331,7 @@ def _load_excel(path: Path) -> DataStore:
     employees = pd.read_excel(xls, EXCEL_SHEETS["employees"])
     metric_map = _normalize_metric_map(pd.read_excel(xls, EXCEL_SHEETS["metric_map"]))
     evidence_readiness = pd.read_excel(xls, EXCEL_SHEETS["evidence"])
+    lists = pd.read_excel(xls, EXCEL_SHEETS["lists"])
     dashboard_raw = pd.read_excel(xls, EXCEL_SHEETS["dashboard"], header=None)
     dashboard = _parse_dashboard_sheet(dashboard_raw)
 
@@ -353,6 +356,7 @@ def _load_excel(path: Path) -> DataStore:
         customer_ops=customer_ops,
         employees=employees,
         evidence_readiness=evidence_readiness,
+        lists=lists,
         dashboard=dashboard,
         loaded_at=loaded_at,
         source=str(path.name),

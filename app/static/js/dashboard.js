@@ -9,6 +9,7 @@ const I18N = {
     pageTitle: "سندباد AI | Doha Oasis",
     brandTag: "Executive Intelligence",
     liveKpis: "مؤشرات حية",
+    workbookStats: "إحصائيات قاعدة البيانات",
     strategicInsights: "رؤى استراتيجية",
     connected: "متصل بقاعدة البيانات",
     emptyTitle: "مستشارك الاستراتيجي جاهز",
@@ -28,6 +29,7 @@ const I18N = {
     pageTitle: "Sindibad AI | Doha Oasis",
     brandTag: "Executive Intelligence",
     liveKpis: "Live KPIs",
+    workbookStats: "Database Statistics",
     strategicInsights: "Strategic Insights",
     connected: "Connected to database",
     emptyTitle: "Your strategic advisor is ready",
@@ -517,6 +519,29 @@ function renderDashboard() {
     </button>`;
     })
     .join("");
+
+  const stats = dashboardData.statistics || [];
+  document.getElementById("workbookStats").innerHTML = stats.length
+    ? `
+    <div class="workbook-stats-head">
+      <span class="workbook-stats-title">${t("workbookStats")}</span>
+      <span class="workbook-stats-source">${esc(c.data_source || "Excel")} · Dashboard</span>
+    </div>
+    <div class="workbook-stats-grid">
+      ${stats
+        .map((s) => {
+          const label = pick(s, "label_ar", "label_en");
+          const subtitle = pick(s, "subtitle_ar", "subtitle_en");
+          return `
+        <div class="workbook-stat">
+          <div class="workbook-stat-label">${esc(label)}</div>
+          <div class="workbook-stat-value">${esc(s.value)}</div>
+          ${subtitle ? `<div class="workbook-stat-sub">${esc(subtitle)}</div>` : ""}
+        </div>`;
+        })
+        .join("")}
+    </div>`
+    : "";
 
   document.getElementById("presetCards").innerHTML = dashboardData.preset_questions
     .map(

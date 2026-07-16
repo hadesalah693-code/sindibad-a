@@ -20,6 +20,7 @@ from app.services.dashboard import (
     get_dashboard_kpis,
     get_preset_questions,
     get_quick_tags,
+    get_workbook_statistics,
     try_special_query,
 )
 
@@ -196,6 +197,7 @@ async def dashboard_data():
             for q in get_preset_questions()
         ],
         "quick_tags": get_quick_tags(),
+        "statistics": get_workbook_statistics(),
     }
 
 
@@ -228,7 +230,8 @@ async def health():
         "data_dir": str(settings.data_dir),
         "sheets_loaded": [
             "Correlation_Data", "Monthly_HR", "Finance", "Metric_Map",
-            "Brand", "Customer_Ops", "Employees", "Evidence_Readiness", "Dashboard",
+            "Brand", "Customer_Ops", "Employees", "Evidence_Readiness",
+            "Dashboard", "Lists",
         ],
     }
 

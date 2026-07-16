@@ -70,5 +70,17 @@ def test_excel_dashboard_correlation(agent):
 def test_evidence_and_dashboard_loaded(agent):
     store = agent.store
     assert len(store.evidence_readiness) > 0
+    assert len(store.lists) > 0
     assert "Average Employer Brand Score" in store.dashboard["kpis"]
     assert len(store.dashboard["correlations"]) >= 5
+
+
+def test_workbook_statistics():
+    from app.services.dashboard import get_workbook_statistics
+
+    stats = get_workbook_statistics()
+    assert len(stats) >= 8
+    ids = {s["id"] for s in stats}
+    assert "engagement" in ids
+    assert "csat" in ids
+    assert "strongest_correlation" in ids
