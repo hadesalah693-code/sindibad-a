@@ -96,7 +96,6 @@ function startApp() {
 }
 
 function initApp() {
-  const saved = localStorage.getItem(LANG_KEY);
   const gate = document.getElementById("langGate");
   const shell = document.getElementById("appShell");
 
@@ -108,14 +107,7 @@ function initApp() {
     });
   });
 
-  if (saved === "ar" || saved === "en") {
-    lang = saved;
-    gate?.classList.add("hidden");
-    shell?.classList.remove("app-hidden");
-    startApp();
-    return;
-  }
-
+  gate?.classList.remove("hidden", "lang-gate--hide");
   document.body.classList.add("lang-gate-open");
   shell?.classList.add("app-hidden");
 }
