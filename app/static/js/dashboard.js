@@ -10,6 +10,8 @@ const I18N = {
     brandTag: "Executive Intelligence",
     liveKpis: "مؤشرات حية",
     workbookStats: "إحصائيات قاعدة البيانات",
+    sbuReadiness: "جاهزية SBU · آيزو 30414",
+    sbuOverall: "الإجمالي",
     strategicInsights: "رؤى استراتيجية",
     connected: "متصل بقاعدة البيانات",
     emptyTitle: "مستشارك الاستراتيجي جاهز",
@@ -30,6 +32,8 @@ const I18N = {
     brandTag: "Executive Intelligence",
     liveKpis: "Live KPIs",
     workbookStats: "Database Statistics",
+    sbuReadiness: "SBU ISO 30414 Readiness",
+    sbuOverall: "Overall",
     strategicInsights: "Strategic Insights",
     connected: "Connected to database",
     emptyTitle: "Your strategic advisor is ready",
@@ -535,6 +539,29 @@ function renderDashboard() {
     </div>`
     : "";
 
+  const sbu = dashboardData.sbu_corporate;
+  const sbuRows = sbu?.sbu_readiness || [];
+  document.getElementById("sbuStats").innerHTML = sbuRows.length
+    ? `
+    <div class="workbook-stats-head">
+      <span class="workbook-stats-title">${t("sbuReadiness")}</span>
+      <span class="workbook-stats-source">${t("sbuOverall")}: ${esc(sbu.overall_readiness_label || "")} · Entity_Profile</span>
+    </div>
+    <div class="workbook-stats-grid sbu-stats-grid">
+      ${sbuRows
+        .map(
+          (r) => `
+        <button class="workbook-stat sbu-stat ${r.theme || "neutral"}" type="button"
+          data-query="${encodeURIComponent(lang === "ar" ? `ما مؤشرات آيزو في ${r.sbu}؟` : `Which ISO metrics are missing in ${r.short_name}?`)}">
+          <div class="workbook-stat-label">${esc(r.short_name)}</div>
+          <div class="workbook-stat-value">${esc(r.rag_emoji)} ${esc(r.readiness_label)}</div>
+          <div class="workbook-stat-sub">${esc(String(r.employees))} ${t("employees")}</div>
+        </button>`
+        )
+        .join("")}
+    </div>`
+    : "";
+
   document.getElementById("presetCards").innerHTML = dashboardData.preset_questions
     .map(
       (q) => `
@@ -589,6 +616,7 @@ function renderDashboard() {
     .join("");
 
   bindQueryElements(document.getElementById("heroKpiRow"));
+  bindQueryElements(document.getElementById("sbuStats"));
   bindQueryElements(document.getElementById("presetCards"));
   bindQueryElements(document.getElementById("promptGrid"));
   bindQueryElements(document.getElementById("composerTags"));
@@ -859,6 +887,7 @@ function buildChatTurn(query, data) {
   const isExitRisk = type === "exit_risk" || layout === "employee_alerts";
   const isCosts = type === "costs" || layout === "costs_report";
   const isIso = type === "iso" || layout === "iso_compliance";
+  const isSbuIso = type === "sbu_iso" || layout === "sbu_readiness";
   const isGreeting = type === "greeting" || layout === "greeting";
 
   if (isGreeting) {
@@ -927,9 +956,12 @@ function buildChatTurn(query, data) {
     if (ui.metrics?.length) bodyHtml += renderMetricsGrid(ui.metrics, true);
     const recHtml = ui.recommendation_html || data.strategic_actions?.[0] || "";
     if (recHtml) bodyHtml += renderStrategyCard(renderRichSummary(recHtml), ar);
-  } else if (isIso) {
+  } else if (isIso || isSbuIso) {
     if (ui.metrics?.length) bodyHtml += renderMetricsGrid(ui.metrics, true);
-    if (data.table) bodyHtml += renderIsoTable(data.table, ui.table_meta);
+    if (ui.list_items?.length) {
+      bodyHtml += renderListCard(ui.list_title || data.headline, ui.list_items, theme);
+    }
+    if (data.table && isIso) bodyHtml += renderIsoTable(data.table, ui.table_meta);
     if (data.strategic_actions?.length) {
       bodyHtml += renderStrategyCard(esc(data.strategic_actions[0]), ar);
     }
@@ -972,7 +1004,15 @@ function buildChatTurn(query, data) {
     /* chartPayload set above */
   }
 
-  const reportType = isExitRisk ? "exit_risk" : isIso ? "iso" : isCorrelation ? "correlation" : type;
+  const reportType = isExitRisk
+    ? "exit_risk"
+    : isSbuIso
+      ? "sbu_iso"
+      : isIso
+        ? "iso"
+        : isCorrelation
+          ? "correlation"
+          : type;
 
   return {
     html: wrapReportCanvas({

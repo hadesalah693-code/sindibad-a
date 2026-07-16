@@ -1,0 +1,16 @@
+Evidence_ID,Entity_ID,ISO_Metric,Document_Type,File_Name,Source_System,Last_Updated,Status
+EV-001,SBU001,Employee Turnover,HR Report,SBU001_turnover_q4_2025.xlsx,Oracle HR,2025-12-15,Validated
+EV-002,SBU001,Training Hours,LMS Export,SBU001_lms_completion_dec2025.csv,LMS,2025-12-20,Partial
+EV-003,SBU001,Leadership Diversity,HR Analytics,SBU001_leadership_diversity.pdf,HR,2025-11-30,Validated
+EV-004,SBU002,Employee Turnover,HR Report,SBU002_turnover_q4_2025.xlsx,Oracle HR,2025-12-10,Validated
+EV-005,SBU002,Engagement Score,Survey Results,SBU002_engagement_survey_2025.pdf,Survey Platform,2025-10-05,Missing
+EV-006,SBU002,Training Hours,LMS Export,SBU002_lms_completion_dec2025.csv,LMS,2025-12-18,Validated
+EV-007,SBU003,Lost Time Injuries,HSE Log,SBU003_hse_incidents_2025.xlsx,HSE,2025-12-22,Validated
+EV-008,SBU003,Training Investment,Finance Extract,SBU003_training_spend_fy2025.xlsx,Finance,2025-12-01,Partial
+EV-009,SBU004,Absenteeism,Time & Attendance,SBU004_absence_report_2025.xlsx,Time & Attendance,2025-12-19,Validated
+EV-010,SBU005,Revenue per Employee,ERP Export,SBU005_revenue_per_head_q4.xlsx,ERP,2025-12-14,Validated
+EV-011,SBU005,Engagement Score,Survey Results,SBU005_engagement_survey_2025.pdf,Survey Platform,2025-09-12,Missing
+EV-012,SBU005,Training Hours,LMS Export,SBU005_lms_completion_dec2025.csv,LMS,2025-11-08,Missing
+EV-013,SBU006,Total Workforce,HRIS Extract,SBU006_headcount_dec2025.xlsx,HRIS,2025-12-21,Validated
+EV-014,SBU006,Policy Acknowledgement,HR Policy Log,SBU006_policy_acknowledgement_2025.pdf,HR,2025-12-17,Validated
+EV-015,SBU001,Health & Safety Incidents,HSE Log,SBU001_hse_near_miss_q4.xlsx,HSE,2025-12-08,Partial

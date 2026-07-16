@@ -850,6 +850,34 @@ body.lang-gate-open { overflow: hidden; }
   text-overflow: ellipsis;
 }
 
+.sbu-stats {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 12px 22px 14px;
+  flex-shrink: 0;
+}
+
+.sbu-stats-grid {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+
+.sbu-stat {
+  cursor: pointer;
+  text-align: start;
+  font-family: inherit;
+  transition: border-color var(--t), box-shadow var(--t), transform var(--t);
+}
+
+.sbu-stat:hover {
+  border-color: var(--border-focus);
+  box-shadow: var(--sh-sm);
+  transform: translateY(-1px);
+}
+
+.sbu-stat.success .workbook-stat-value { color: var(--green); }
+.sbu-stat.warning .workbook-stat-value { color: var(--amber); }
+.sbu-stat.danger .workbook-stat-value { color: var(--red); }
+
 /* ── Workspace body ── */
 .workspace-body {
   flex: 1;
@@ -1658,6 +1686,7 @@ body.lang-gate-open { overflow: hidden; }
 
   .workbook-stats { padding: 10px 14px 12px; }
   .workbook-stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .sbu-stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .workbook-stat-value { font-size: 0.92rem; }
 
   .workspace-body { padding: 14px; }

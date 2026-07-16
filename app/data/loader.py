@@ -11,6 +11,9 @@ import pandas as pd
 from app.config import settings
 
 EXCEL_FILE = "Doha_Oasis_Sindibad_Database.xlsx"
+SBU_ENTITY_FILE = "Entity_Profile.csv"
+SBU_ISO_METRICS_FILE = "ISO_Metric_Availability.csv"
+SBU_EVIDENCE_FILE = "Evidence_Repository.csv"
 EXCEL_SHEETS = {
     "correlation": "Correlation_Data",
     "hr": "Monthly_HR",
@@ -99,6 +102,9 @@ class DataStore:
     employees: pd.DataFrame
     evidence_readiness: pd.DataFrame
     lists: pd.DataFrame
+    entity_profile: pd.DataFrame
+    iso_metric_availability: pd.DataFrame
+    evidence_repository: pd.DataFrame
     dashboard: dict
     loaded_at: str
     source: str
@@ -321,6 +327,20 @@ def get_dashboard_kpi(label: str, store: DataStore | None = None) -> float | Non
         return None
 
 
+def _load_sbu_tables(base: Path) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+    def _read_csv(name: str) -> pd.DataFrame:
+        path = base / name
+        if not path.exists():
+            return pd.DataFrame()
+        return pd.read_csv(path)
+
+    return (
+        _read_csv(SBU_ENTITY_FILE),
+        _read_csv(SBU_ISO_METRICS_FILE),
+        _read_csv(SBU_EVIDENCE_FILE),
+    )
+
+
 def _load_excel(path: Path) -> DataStore:
     xls = pd.ExcelFile(path)
     correlation = _normalize_columns(pd.read_excel(xls, EXCEL_SHEETS["correlation"]))
@@ -357,6 +377,9 @@ def _load_excel(path: Path) -> DataStore:
         employees=employees,
         evidence_readiness=evidence_readiness,
         lists=lists,
+        entity_profile=pd.DataFrame(),
+        iso_metric_availability=pd.DataFrame(),
+        evidence_repository=pd.DataFrame(),
         dashboard=dashboard,
         loaded_at=loaded_at,
         source=str(path.name),
@@ -374,7 +397,26 @@ def load_data(data_dir: Path | None = None) -> DataStore:
             f"Required data file not found: {excel_path}. "
             "Place Doha_Oasis_Sindibad_Database.xlsx in the data/ folder."
         )
-    _store = _load_excel(excel_path)
+    core = _load_excel(excel_path)
+    entity_profile, iso_metrics, evidence_repo = _load_sbu_tables(base)
+    _store = DataStore(
+        correlation=core.correlation,
+        hr=core.hr,
+        finance=core.finance,
+        metric_map=core.metric_map,
+        brand=core.brand,
+        customer_ops=core.customer_ops,
+        employees=core.employees,
+        evidence_readiness=core.evidence_readiness,
+        lists=core.lists,
+        entity_profile=entity_profile,
+        iso_metric_availability=iso_metrics,
+        evidence_repository=evidence_repo,
+        dashboard=core.dashboard,
+        loaded_at=core.loaded_at,
+        source=core.source,
+        source_path=core.source_path,
+    )
     return _store
 
 

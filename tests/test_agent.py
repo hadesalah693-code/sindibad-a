@@ -84,3 +84,22 @@ def test_workbook_statistics():
     assert "engagement" in ids
     assert "csat" in ids
     assert "strongest_correlation" in ids
+
+
+def test_sbu_entity_model():
+    from app.services.sbu_iso import get_corporate_iso_dashboard, try_sbu_iso_query
+
+    store = load_data()
+    assert len(store.entity_profile) == 6
+    assert len(store.iso_metric_availability) >= 10
+    assert len(store.evidence_repository) >= 5
+
+    dashboard = get_corporate_iso_dashboard(store)
+    assert dashboard["total_sbus"] == 6
+    assert dashboard["overall_readiness_pct"] > 0
+    assert dashboard["largest_gap_sbu"]["entity_id"] == "SBU005"
+
+    report = try_sbu_iso_query("Show corporate SBU ISO 30414 readiness report", language="en")
+    assert report is not None
+    assert report["response_type"] == "sbu_iso"
+    assert len(report["table"]) == 6

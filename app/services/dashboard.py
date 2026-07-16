@@ -353,6 +353,12 @@ def get_quick_tags() -> list[dict[str, str]]:
             "query_en": "What is the relationship between customer satisfaction and training completion?",
         },
         {
+            "label_ar": "جاهزية SBU",
+            "label_en": "SBU Readiness",
+            "query_ar": "ما تقرير جاهزية SBU على مستوى المجموعة؟",
+            "query_en": "Show corporate SBU ISO 30414 readiness report",
+        },
+        {
             "label_ar": "تحية",
             "label_en": "Greeting",
             "query_ar": "السلام عليكم",

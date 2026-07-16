@@ -1,0 +1,60 @@
+Entity_ID,ISO_Metric,Source,RAG,Owner
+SBU001,Employee Turnover,Oracle HR,Green,HR
+SBU001,Training Hours,LMS,Amber,L&D
+SBU001,Leadership Diversity,HR,Green,HR
+SBU001,Engagement Score,Survey,Green,HR
+SBU001,Workforce Composition,HRIS,Green,HR
+SBU001,Absenteeism,Time & Attendance,Green,HR
+SBU001,Revenue per Employee,ERP,Green,Finance
+SBU001,Training Investment,Finance,Green,Finance
+SBU001,Policy Acknowledgement,HR,Green,HR
+SBU001,Health & Safety Incidents,HSE,Amber,HSE
+SBU002,Employee Turnover,Oracle HR,Green,HR
+SBU002,Engagement Score,Survey,Red,HR
+SBU002,Training Hours,LMS,Green,L&D
+SBU002,Leadership Diversity,HR,Amber,HR
+SBU002,Workforce Composition,HRIS,Green,HR
+SBU002,Absenteeism,Time & Attendance,Green,HR
+SBU002,Revenue per Employee,ERP,Green,Finance
+SBU002,Training Investment,Finance,Amber,Finance
+SBU002,Policy Acknowledgement,HR,Green,HR
+SBU002,Customer Satisfaction,CRM,Green,Operations
+SBU003,Lost Time Injuries,HSE,Green,HSE
+SBU003,Training Investment,Finance,Amber,Finance
+SBU003,Employee Turnover,Oracle HR,Green,HR
+SBU003,Engagement Score,Survey,Amber,HR
+SBU003,Training Hours,LMS,Amber,L&D
+SBU003,Workforce Composition,HRIS,Green,HR
+SBU003,Absenteeism,Time & Attendance,Red,HR
+SBU003,Revenue per Employee,ERP,Amber,Finance
+SBU003,Policy Acknowledgement,HR,Green,HR
+SBU003,Health & Safety Incidents,HSE,Green,HSE
+SBU004,Absenteeism,Time & Attendance,Green,HR
+SBU004,Employee Turnover,Oracle HR,Green,HR
+SBU004,Engagement Score,Survey,Amber,HR
+SBU004,Training Hours,LMS,Green,L&D
+SBU004,Revenue per Employee,ERP,Green,Finance
+SBU004,Workforce Composition,HRIS,Amber,HR
+SBU004,Policy Acknowledgement,HR,Green,HR
+SBU004,Training Investment,Finance,Amber,Finance
+SBU004,Customer Satisfaction,CRM,Green,Operations
+SBU005,Revenue per Employee,ERP,Green,Finance
+SBU005,Employee Turnover,Oracle HR,Amber,HR
+SBU005,Engagement Score,Survey,Red,HR
+SBU005,Training Hours,LMS,Red,L&D
+SBU005,Leadership Diversity,HR,Amber,HR
+SBU005,Workforce Composition,HRIS,Amber,HR
+SBU005,Absenteeism,Time & Attendance,Green,HR
+SBU005,Training Investment,Finance,Red,Finance
+SBU005,Policy Acknowledgement,HR,Amber,HR
+SBU005,Health & Safety Incidents,HSE,Green,HSE
+SBU006,Total Workforce,HRIS,Green,HR
+SBU006,Employee Turnover,Oracle HR,Green,HR
+SBU006,Engagement Score,Survey,Green,HR
+SBU006,Training Hours,LMS,Green,L&D
+SBU006,Leadership Diversity,HR,Green,HR
+SBU006,Workforce Composition,HRIS,Green,HR
+SBU006,Policy Acknowledgement,HR,Green,HR
+SBU006,Training Investment,Finance,Green,Finance
+SBU006,Absenteeism,Time & Attendance,Green,HR
+SBU006,Revenue per Employee,ERP,Amber,Finance

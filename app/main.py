@@ -23,6 +23,7 @@ from app.services.dashboard import (
     get_workbook_statistics,
     try_special_query,
 )
+from app.services.sbu_iso import get_corporate_iso_dashboard, try_sbu_iso_query
 
 logger = logging.getLogger("sindibad")
 _agent: SindibadAgent | None = None
@@ -198,6 +199,7 @@ async def dashboard_data():
         ],
         "quick_tags": get_quick_tags(),
         "statistics": get_workbook_statistics(),
+        "sbu_corporate": get_corporate_iso_dashboard(),
     }
 
 
@@ -206,6 +208,8 @@ async def advise(request: QueryRequest):
     agent = _ensure_agent()
 
     special = try_special_query(request.query, language=request.language)
+    if not special:
+        special = try_sbu_iso_query(request.query, language=request.language)
     if special:
         return _special_to_payload(special, request.query)
 
@@ -232,6 +236,7 @@ async def health():
             "Correlation_Data", "Monthly_HR", "Finance", "Metric_Map",
             "Brand", "Customer_Ops", "Employees", "Evidence_Readiness",
             "Dashboard", "Lists",
+            "Entity_Profile", "ISO_Metric_Availability", "Evidence_Repository",
         ],
     }
 
