@@ -251,7 +251,7 @@ body.lang-gate-open { overflow: hidden; }
 .shell {
   display: flex;
   height: 100dvh;
-  direction: rtl;
+  direction: inherit;
   overflow: hidden;
 }
 
@@ -265,7 +265,7 @@ body.lang-gate-open { overflow: hidden; }
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  border-inline-start: 1px solid rgba(255,255,255,0.06);
+  border-inline-end: 1px solid rgba(255,255,255,0.06);
   position: relative;
   z-index: 199;
   transition: transform 0.28s var(--ease);
@@ -457,15 +457,19 @@ body.lang-gate-open { overflow: hidden; }
   top: 0;
   bottom: 0;
   width: 3px;
-  border-radius: 0 3px 3px 0;
+  border-radius: 3px 0 0 3px;
   opacity: 0;
   transition: opacity var(--t);
 }
-[dir="ltr"] .kpi-item::before { border-radius: 3px 0 0 3px; }
+[dir="rtl"] .kpi-item::before { border-radius: 0 3px 3px 0; }
 .kpi-item.danger::before { background: linear-gradient(180deg, #ff6b6b, var(--red)); }
 .kpi-item.warning::before { background: linear-gradient(180deg, #fbbf24, var(--amber)); }
 .kpi-item.success::before { background: linear-gradient(180deg, #34d399, var(--green)); }
-.kpi-item:hover { background: rgba(201,166,107,0.08); border-color: rgba(201,166,107,0.2); transform: translateX(-2px); }
+.kpi-item:hover {
+  background: rgba(201,166,107,0.08);
+  border-color: rgba(201,166,107,0.2);
+}
+[dir="rtl"] .kpi-item:hover { transform: translateX(-2px); }
 [dir="ltr"] .kpi-item:hover { transform: translateX(2px); }
 .kpi-item:hover::before { opacity: 1; }
 
@@ -491,8 +495,8 @@ body.lang-gate-open { overflow: hidden; }
 .kpi-item.success .kpi-info .value { color: #6ee7b7; }
 
 .kpi-arrow { font-size: 0.68rem; color: var(--sidebar-muted); opacity: 0; transition: opacity var(--t), transform var(--t); }
-.kpi-item:hover .kpi-arrow { opacity: 0.65; transform: translateX(-2px); }
-[dir="ltr"] .kpi-item:hover .kpi-arrow { transform: translateX(2px); }
+[dir="rtl"] .kpi-item:hover .kpi-arrow { opacity: 0.65; transform: translateX(-2px); }
+[dir="ltr"] .kpi-item:hover .kpi-arrow { opacity: 0.65; transform: translateX(2px); }
 .kpi-dot { display: none; }
 
 /* ── Insight nav list ── */
@@ -555,16 +559,16 @@ body.lang-gate-open { overflow: hidden; }
 
 /* Chevron indicator */
 .insight-item::after {
-  content: "‹";
   font-size: 0.85rem;
   color: rgba(142,165,192,0.35);
   opacity: 0;
   transition: opacity var(--t), transform var(--t);
   flex-shrink: 0;
 }
+[dir="rtl"] .insight-item::after { content: "‹"; }
 [dir="ltr"] .insight-item::after { content: "›"; }
-.insight-item:hover::after { opacity: 1; transform: translateX(-2px); }
-[dir="ltr"] .insight-item:hover::after { transform: translateX(2px); }
+[dir="rtl"] .insight-item:hover::after { opacity: 1; transform: translateX(-2px); }
+[dir="ltr"] .insight-item:hover::after { opacity: 1; transform: translateX(2px); }
 
 /* ── Sidebar footer ── */
 .sidebar-footer {
@@ -1247,7 +1251,8 @@ body.lang-gate-open { overflow: hidden; }
   background: var(--bg);
   border: 1px solid var(--border);
   border-radius: var(--r);
-  padding: 14px 14px 14px 18px;
+  padding: 14px;
+  padding-inline-start: 18px;
   position: relative;
   overflow: hidden;
 }
@@ -1258,7 +1263,7 @@ body.lang-gate-open { overflow: hidden; }
   top: 0;
   bottom: 0;
   width: 3px;
-  border-radius: 2px 0 0 2px;
+  border-radius: 3px 0 0 3px;
 }
 [dir="rtl"] .metric-card::before { border-radius: 0 2px 2px 0; }
 
@@ -1480,10 +1485,11 @@ body.lang-gate-open { overflow: hidden; }
   background: var(--bg);
   border: 1.5px solid var(--border);
   border-radius: 14px;
-  padding: 5px 5px 5px 16px;
+  padding-block: 5px;
+  padding-inline: 16px 5px;
   transition: border-color var(--t), box-shadow var(--t);
 }
-[dir="rtl"] .composer-box { padding: 5px 16px 5px 5px; }
+[dir="rtl"] .composer-box { padding-inline: 5px 16px; }
 .composer-box:focus-within {
   border-color: var(--navy-mid);
   box-shadow: 0 0 0 3px rgba(13,34,64,0.07);
@@ -1499,6 +1505,8 @@ body.lang-gate-open { overflow: hidden; }
   color: var(--text);
   outline: none;
   padding: 10px 0;
+  text-align: start;
+  direction: inherit;
 }
 #queryInput::placeholder { color: var(--text-muted); }
 
